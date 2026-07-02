@@ -1,9 +1,5 @@
 const logger = require('../config/logger');
 
-/**
- * Express Error Handling Middleware.
- * Catches errors, logs them with the Winston logger, and returns standard JSON responses.
- */
 function errorHandler(err, req, res, next) {
   if (res.headersSent) {
     return next(err);
@@ -13,7 +9,6 @@ function errorHandler(err, req, res, next) {
   const message = err.message || 'Internal Server Error';
   const details = err.details || null;
 
-  // Log error using winston logger (do NOT use console.log)
   logger.error(`App Error: ${message}`, {
     method: req.method,
     url: req.originalUrl,

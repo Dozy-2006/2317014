@@ -1,7 +1,6 @@
 const winston = require('winston');
 const path = require('path');
 
-// Write log files into the vehicle-scheduler-be directory so they stay within the project boundaries
 const logDir = path.resolve(__dirname, '../vehicle-scheduler-be');
 
 const logFormat = winston.format.combine(
@@ -27,7 +26,6 @@ const logger = winston.createLogger({
   ]
 });
 
-// Express request logging middleware
 const loggingMiddleware = (req, res, next) => {
   const start = Date.now();
   

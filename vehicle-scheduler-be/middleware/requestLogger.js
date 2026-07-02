@@ -6,13 +6,8 @@ try {
   const { loggingMiddleware } = require('../../logging-middleware');
   externalMiddleware = loggingMiddleware;
 } catch (error) {
-  // Graceful fallback to a local request logger if external middleware is absent
 }
 
-/**
- * Request Logger Middleware integration point.
- * Plugs in the external logging middleware or falls back to standard logging.
- */
 const requestLogger = (req, res, next) => {
   if (externalMiddleware) {
     return externalMiddleware(req, res, next);

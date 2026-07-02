@@ -1,7 +1,6 @@
 const axios = require('axios');
 const logger = require('../config/logger');
 
-// Custom operational error class for API errors
 class ApiError extends Error {
   constructor(message, statusCode, details = null) {
     super(message);
@@ -18,19 +17,16 @@ if (!BASE_URL) {
   logger.warn('BASE_URL is not defined in the environment variables. API calls may fail.');
 }
 
-// Check if BASE_URL already contains the context path component
 const hasContextPath = BASE_URL.includes('/evaluation-service');
 
-// Create an Axios client configuration
 const apiClient = axios.create({
   baseURL: BASE_URL,
-  timeout: parseInt(process.env.API_TIMEOUT || '10000', 10), // Increased default timeout for external API reliability
+  timeout: parseInt(process.env.API_TIMEOUT || '10000', 10),
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
-// Request interceptor to dynamically inject the Access Token
 apiClient.interceptors.request.use(
   (config) => {
     const token = process.env.ACCESS_TOKEN;
@@ -44,12 +40,8 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-/**
- * Map Axios error objects to standardized ApiError structure
- */
 function handleAxiosError(error, endpointName) {
   if (error.response) {
-    // Server responded with a non-2xx status code
     const status = error.response.status;
     const data = error.response.data;
     logger.error(`External API Error: Failed to fetch ${endpointName}. Status: ${status}`, { status, data });
@@ -62,7 +54,6 @@ function handleAxiosError(error, endpointName) {
     }
     return new ApiError(`External service error on ${endpointName}: ${error.message}`, status, data);
   } else if (error.request) {
-    // Request was made but no response was received
     logger.error(`External API Timeout/Network Failure: No response received from ${endpointName}.`, {
       code: error.code,
       message: error.message
@@ -73,16 +64,11 @@ function handleAxiosError(error, endpointName) {
     }
     return new ApiError('Bad Gateway: Failed to establish connection with external API.', 502, { code: error.code });
   } else {
-    // Error setting up the request
     logger.error(`API Client Configuration Error fetching ${endpointName}: ${error.message}`);
     return new ApiError(`Internal Client Error: ${error.message}`, 500);
   }
 }
 
-/**
- * Fetches depots list from evaluation-service
- * @returns {Promise<Array>}
- */
 async function fetchDepots() {
   try {
     logger.info('API Call: Fetching depots...');
@@ -100,10 +86,6 @@ async function fetchDepots() {
   }
 }
 
-/**
- * Fetches vehicles list from evaluation-service
- * @returns {Promise<Array>}
- */
 async function fetchVehicles() {
   try {
     logger.info('API Call: Fetching vehicles...');
