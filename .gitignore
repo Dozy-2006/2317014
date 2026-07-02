@@ -1,0 +1,16 @@
+# Ignore dependencies
+node_modules/
+vehicle-scheduler-be/node_modules/
+
+# Ignore configuration and secrets
+.env
+vehicle-scheduler-be/.env
+
+# Ignore log outputs
+*.log
+vehicle-scheduler-be/*.log
+
+# Ignore IDE and OS files
+.vscode/
+.DS_Store
+Thumbs.db
