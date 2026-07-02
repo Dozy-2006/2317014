@@ -103,8 +103,26 @@ async function fetchVehicles() {
   }
 }
 
+async function fetchNotifications() {
+  try {
+    logger.info('API Call: Fetching notifications...');
+    const url = hasContextPath ? '/notifications' : '/evaluation-service/notifications';
+    const response = await apiClient.get(url);
+    
+    if (!response.data || !Array.isArray(response.data.notifications)) {
+      throw new ApiError('Bad Gateway: External service returned invalid notifications structure.', 502, response.data);
+    }
+    
+    return response.data.notifications;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw handleAxiosError(error, 'notifications');
+  }
+}
+
 module.exports = {
   fetchDepots,
   fetchVehicles,
+  fetchNotifications,
   ApiError
 };

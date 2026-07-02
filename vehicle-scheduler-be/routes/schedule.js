@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { fetchDepots, fetchVehicles } = require('../services/apiService');
+const { fetchDepots, fetchVehicles, fetchNotifications } = require('../services/apiService');
 const { solveKnapsack } = require('../utils/knapsack');
 const logger = require('../config/logger');
 
@@ -34,6 +34,36 @@ router.get('/schedule', async (req, res, next) => {
 
     logger.info('GET /schedule - Schedule calculation completed successfully.');
     res.json(results);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/depots', async (req, res, next) => {
+  try {
+    logger.info('GET /depots - Fetching depots list...');
+    const depots = await fetchDepots();
+    res.json({ depots });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/vehicles', async (req, res, next) => {
+  try {
+    logger.info('GET /vehicles - Fetching vehicles list...');
+    const vehicles = await fetchVehicles();
+    res.json({ vehicles });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/notifications', async (req, res, next) => {
+  try {
+    logger.info('GET /notifications - Fetching notifications list...');
+    const notifications = await fetchNotifications();
+    res.json({ notifications });
   } catch (error) {
     next(error);
   }
